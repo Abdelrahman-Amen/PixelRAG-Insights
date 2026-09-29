@@ -26,7 +26,8 @@ st.set_page_config(
 )
 
 # ── Force sidebar always open ─────────────────────────────
-st.markdown("""
+st.markdown(
+    """
 <style>
 [data-testid="collapsedControl"] { display: none !important; }
 section[data-testid="stSidebar"] { 
@@ -35,18 +36,24 @@ section[data-testid="stSidebar"] {
     transform: none !important;
 }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ── Custom CSS ────────────────────────────────────────────
 
-st.markdown("""
+st.markdown(
+    """
 <style>
 [data-testid="collapsedControl"] { display: none; }
 section[data-testid="stSidebar"] { min-width: 300px; }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
-st.markdown("""
+st.markdown(
+    """
 <style>
 /* hide default streamlit header */
 #MainMenu, footer, header {visibility: hidden;}
@@ -62,7 +69,9 @@ st.markdown("""
     border-radius: 10px;
 }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # ── Session state ─────────────────────────────────────────
 for k, v in {
@@ -81,9 +90,12 @@ for k, v in {
 def run_pipeline(pdf_path: Path):
     index_dir = INDEX_DIR / pdf_path.stem
     with st.status(
-        "⚙️ Building index — first time only, please wait..." if not is_built(index_dir)
-        else "🚀 Loading...",
-        expanded=True
+        (
+            "⚙️ Building index — first time only, please wait..."
+            if not is_built(index_dir)
+            else "🚀 Loading..."
+        ),
+        expanded=True,
     ) as status:
         try:
             if not is_built(index_dir):
@@ -98,7 +110,7 @@ def run_pipeline(pdf_path: Path):
             start_server(idx_dir)
             _, art_dir, _, _ = get_paths(pdf_path)
             st.session_state.article_dir = art_dir
-            st.session_state.ready       = True
+            st.session_state.ready = True
             status.update(label="✅ Ready to chat!", state="complete")
         except Exception as e:
             status.update(label=f"❌ Error: {e}", state="error")
@@ -122,14 +134,16 @@ if uploaded:
     pdf_path.write_bytes(uploaded.getvalue())
 
     if st.session_state.pdf_name != uploaded.name:
-        st.session_state.update({
-            "ready": False,
-            "article_dir": None,
-            "history": [],
-            "pdf_name": uploaded.name,
-            "pdf_path": pdf_path,
-            "show_pdf": False,
-        })
+        st.session_state.update(
+            {
+                "ready": False,
+                "article_dir": None,
+                "history": [],
+                "pdf_name": uploaded.name,
+                "pdf_path": pdf_path,
+                "show_pdf": False,
+            }
+        )
 
     if not st.session_state.ready:
         run_pipeline(pdf_path)
@@ -138,12 +152,15 @@ st.divider()
 
 # ── Main layout ───────────────────────────────────────────
 if not uploaded:
-    st.markdown("""
+    st.markdown(
+        """
     <div style='text-align:center; margin-top:15vh; color:#888;'>
         <h2>👆 Upload a PDF to get started</h2>
         <p>Ask questions about any PDF — charts, tables, images, scanned docs</p>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
 elif not st.session_state.ready:
     st.info("Processing PDF...")
@@ -154,7 +171,7 @@ else:
     with btn_col:
         if st.button(
             "📖 Hide PDF" if st.session_state.show_pdf else "📖 Show PDF",
-            use_container_width=True
+            use_container_width=True,
         ):
             st.session_state.show_pdf = not st.session_state.show_pdf
             st.rerun()
@@ -165,12 +182,15 @@ else:
     # ── PDF viewer (collapsible) ──────────────────────────
     if st.session_state.show_pdf:
         b64 = pdf_to_b64(st.session_state.pdf_path)
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <iframe
             src="data:application/pdf;base64,{b64}"
             class="pdf-frame"
         ></iframe>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
         st.divider()
 
     # ── Chat history ──────────────────────────────────────

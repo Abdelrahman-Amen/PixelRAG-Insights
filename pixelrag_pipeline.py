@@ -33,6 +33,7 @@ from config import (
 
 # ── Helpers ───────────────────────────────────────────────
 
+
 def log(msg):
     print(f"\n{'─'*60}\n{msg}\n{'─'*60}")
 
@@ -55,18 +56,18 @@ def cuda_env():
 
 def score_bar(score):
     filled = int(score * 10)
-    color  = "🟢" if score >= 0.7 else "🟡" if score >= 0.4 else "🔴"
+    color = "🟢" if score >= 0.7 else "🟡" if score >= 0.4 else "🔴"
     return color + "█" * filled + "░" * (10 - filled)
 
 
 def get_paths(pdf_path: Path):
     """Derive all folder paths from a PDF path."""
-    stem        = pdf_path.stem
-    base        = pdf_path.parent
-    tiles_dir   = base / f"{stem}_tiles"
+    stem = pdf_path.stem
+    base = pdf_path.parent
+    tiles_dir = base / f"{stem}_tiles"
     article_dir = tiles_dir / "1.png.tiles"
-    index_dir   = base / f"{stem}_index"
-    emb_dir     = index_dir / "embeddings"
+    index_dir = base / f"{stem}_index"
+    emb_dir = index_dir / "embeddings"
     return tiles_dir, article_dir, index_dir, emb_dir
 
 
@@ -96,7 +97,8 @@ def render(pdf: Path, tiles_dir: Path, article_dir: Path):
         (p for p in tiles_dir.glob("*.tiles") if p.name != "1.png.tiles"), None
     )
     if not raw_sub:
-        print("✗ No tiles found — check poppler"); sys.exit(1)
+        print("✗ No tiles found — check poppler")
+        sys.exit(1)
 
     for f in raw_sub.iterdir():
         shutil.copy(f, article_dir / f.name)
@@ -161,8 +163,9 @@ def start_server(index_dir: Path) -> subprocess.Popen:
     global _server_proc
 
     log("Starting server")
-    subprocess.run(f"fuser -k {PIXELRAG_PORT}/tcp",
-                   shell=True, stderr=subprocess.DEVNULL)
+    subprocess.run(
+        f"fuser -k {PIXELRAG_PORT}/tcp", shell=True, stderr=subprocess.DEVNULL
+    )
     time.sleep(1)
 
     articles = index_dir / "articles.json"
@@ -197,6 +200,7 @@ def stop_server():
 
 # ── Search + Answer ───────────────────────────────────────
 
+
 def retrieve(query: str, n_docs: int = N_DOCS) -> list:
     r = requests.post(
         f"{PIXELRAG_URL}/search",
@@ -214,31 +218,39 @@ def tile_to_b64(article_dir: Path, tile_index: int) -> str | None:
     return None
 
 
-def answer(query: str, article_dir: Path, n_docs: int = N_DOCS, save_dir: Path = None) -> dict:
+def answer(
+    query: str, article_dir: Path, n_docs: int = N_DOCS, save_dir: Path = None
+) -> dict:
     hits = retrieve(query, n_docs)
 
     print("\n[Retrieval]")
     for i, h in enumerate(hits, 1):
-        print(f"  [{i}] page={h['tile_index']+1}  score={h['score']:.4f} {score_bar(h['score'])}")
+        print(
+            f"  [{i}] page={h['tile_index']+1}  score={h['score']:.4f} {score_bar(h['score'])}"
+        )
 
     content = []
     for h in hits:
         b64 = tile_to_b64(article_dir, h["tile_index"])
         if b64:
-            content.append({
-                "type": "image_url",
-                "image_url": {"url": f"data:image/jpeg;base64,{b64}"},
-            })
+            content.append(
+                {
+                    "type": "image_url",
+                    "image_url": {"url": f"data:image/jpeg;base64,{b64}"},
+                }
+            )
 
-    content.append({
-        "type": "text",
-        "text": (
-            f"Based on the document page(s) shown, answer this question:\n\n{query}\n\n"
-            "Format your answer as a numbered list with each point on a new line.\n"
-            "Be concise and specific. "
-            "If the answer is NOT visible in these pages, say so clearly instead of guessing."
-        ),
-    })
+    content.append(
+        {
+            "type": "text",
+            "text": (
+                f"Based on the document page(s) shown, answer this question:\n\n{query}\n\n"
+                "Format your answer as a numbered list with each point on a new line.\n"
+                "Be concise and specific. "
+                "If the answer is NOT visible in these pages, say so clearly instead of guessing."
+            ),
+        }
+    )
 
     r = requests.post(
         f"{VLLM_URL}/v1/chat/completions",
@@ -257,7 +269,7 @@ def answer(query: str, article_dir: Path, n_docs: int = N_DOCS, save_dir: Path =
 
     result = {
         "query": query,
-        "pages": [h["tile_index"]+1 for h in hits],
+        "pages": [h["tile_index"] + 1 for h in hits],
         "scores": [h["score"] for h in hits],
         "answer": ans,
     }
@@ -272,12 +284,14 @@ def answer(query: str, article_dir: Path, n_docs: int = N_DOCS, save_dir: Path =
 
 # ── CLI entrypoint ────────────────────────────────────────
 
+
 def main():
     from config import PDF_PATH
 
     pdf = Path(PDF_PATH).resolve()
     if not pdf.exists():
-        print(f"✗ PDF not found: {pdf}"); sys.exit(1)
+        print(f"✗ PDF not found: {pdf}")
+        sys.exit(1)
 
     print(f"\nPDF: {pdf}")
 
@@ -290,9 +304,9 @@ def main():
 
     signal.signal(signal.SIGINT, shutdown)
 
-    print("\n" + "═"*60)
+    print("\n" + "═" * 60)
     print("Ready! Type your questions. Type 'exit' to quit.")
-    print("═"*60)
+    print("═" * 60)
 
     while True:
         try:
