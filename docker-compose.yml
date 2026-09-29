@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  pixelrag:
+    build: .
+    container_name: pixelrag
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./uploads:/app/uploads
+      - ${HF_CACHE:-~/.cache/huggingface}:/root/.cache/huggingface
+    environment:
+      - VLLM_URL=${VLLM_URL}
+      - VLLM_MODEL=${VLLM_MODEL}
+      - GPU_ID=${GPU_ID:-1}
+      - DPI=${DPI:-200}
+      - N_DOCS=${N_DOCS:-3}
+      - PIXELRAG_PORT=${PIXELRAG_PORT:-30001}
+      - LORA_ADAPTER=${LORA_ADAPTER:-/root/.cache/huggingface/hub/models--wiki-screenshot-embedding-lora/lora_vit/ckpt200}
+      - TRANSFORMERS_OFFLINE=1
+      - HF_HUB_OFFLINE=1
+    network_mode: host
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["1"]
+              capabilities: [gpu]

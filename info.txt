@@ -1,0 +1,68 @@
+conda activate pixel_rag
+cd /home/abdelrahman/pixel_rag
+
+
+---------------------------------------------------------------------------------------------------------
+
+if i add new pdf what i need to update??..
+
+1 — test_pipeline.py — change the default PDF path:  
+
+parser.add_argument("--pdf", default="/home/abdelrahman/pixel_rag/NEW.pdf", ...)
+---------------------------------------------------------------------------------------------------------
+
+2 — answer.py — change TILES_DIR:
+
+TILES_DIR = Path("/home/abdelrahman/pixel_rag/NEW_tiles/1.png.tiles")
+---------------------------------------------------------------------------------------------------------
+3 — serve command — point to new index:
+    pixelrag serve \
+  --index-dir /home/abdelrahman/pixel_rag/NEW_index \
+  --articles-json /home/abdelrahman/pixel_rag/NEW_index/articles.json \
+  --port 30001
+Where NEW = your pdf filename without .pdf.
+
+
+---------------------------------------------------------------------------------------------------------
+if file is name ab.pdf so what to update??
+
+
+test_pipeline.py:
+
+
+parser.add_argument("--pdf", default="/home/abdelrahman/pixel_rag/ab.pdf", ...)
+
+answer.py:
+
+python
+TILES_DIR = Path("/home/abdelrahman/pixel_rag/ab_tiles/1.png.tiles")
+
+serve command:
+
+bash
+pixelrag serve \
+  --index-dir /home/abdelrahman/pixel_rag/ab_index \
+  --articles-json /home/abdelrahman/pixel_rag/ab_index/articles.json \
+  --port 30001
+
+
+
+The index wasn't built yet for sample_3. Run test_pipeline.py first:
+fuser -k 30001/tcp
+
+
+python answer.py --query "عدد الفصول فى الملف" --n-docs 10
+
+
+output8443print2025
+
+
+pixelrag serve \
+  --index-dir /home/abdelrahman/pixel_rag/output8443print2025_index \
+  --articles-json /home/abdelrahman/pixel_rag/output8443print2025_index/articles.json \
+  --port 30001
+
+
+
+python answer.py --query "استخرج كل اللى موجود فى الملف كاملا" --n-docs 5
+
