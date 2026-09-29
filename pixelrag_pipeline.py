@@ -16,12 +16,20 @@ from pathlib import Path
 import requests
 
 from config import (
-    ADAPTER, CUDA_BIN, DPI, GPU_ID, N_DOCS,
-    PIXELRAG_PORT, PIXELRAG_URL, VLLM_MAX_TOKENS,
-    VLLM_MODEL, VLLM_TEMPERATURE, VLLM_TIMEOUT,
-    VLLM_TOP_P, VLLM_URL,
+    ADAPTER,
+    CUDA_BIN,
+    DPI,
+    GPU_ID,
+    N_DOCS,
+    PIXELRAG_PORT,
+    PIXELRAG_URL,
+    VLLM_MAX_TOKENS,
+    VLLM_MODEL,
+    VLLM_TEMPERATURE,
+    VLLM_TIMEOUT,
+    VLLM_TOP_P,
+    VLLM_URL,
 )
-
 
 # ── Helpers ───────────────────────────────────────────────
 
@@ -137,7 +145,7 @@ def build(pdf_path: Path):
     if not is_rendered(article_dir):
         render(pdf_path, tiles_dir, article_dir)
     else:
-        print(f"\n✓ Tiles already exist — skipping render")
+        print("\n✓ Tiles already exist — skipping render")
 
     embed(tiles_dir, emb_dir)
     build_index(index_dir, emb_dir, pdf_path.stem)

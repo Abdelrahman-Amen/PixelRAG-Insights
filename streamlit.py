@@ -9,9 +9,15 @@ import time
 from pathlib import Path
 
 import streamlit as st
-
 from config import INDEX_DIR, N_DOCS, UPLOAD_DIR
-from pixelrag_pipeline import answer, build, get_paths, is_built, start_server, stop_server
+from pixelrag_pipeline import (
+    answer,
+    build,
+    get_paths,
+    is_built,
+    start_server,
+    stop_server,
+)
 
 st.set_page_config(
     page_title="PixelRAG",
@@ -190,16 +196,15 @@ else:
     if query:
         with st.chat_message("user"):
             st.write(query)
-        with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
-                try:
-                    result = answer(
-                        query,
-                        st.session_state.article_dir,
-                        n_docs=N_DOCS,
-                    )
-                    st.write(result["answer"])
-                    st.session_state.history.append(result)
-                except Exception as e:
-                    st.error(f"Error: {e}")
+        with st.chat_message("assistant"), st.spinner("Thinking..."):
+            try:
+                result = answer(
+                    query,
+                    st.session_state.article_dir,
+                    n_docs=N_DOCS,
+                )
+                st.write(result["answer"])
+                st.session_state.history.append(result)
+            except Exception as e:
+                st.error(f"Error: {e}")
         st.rerun()
