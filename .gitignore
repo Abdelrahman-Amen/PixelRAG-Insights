@@ -10,3 +10,4 @@ uploads/
 .cache/
 *.log
 .DS_Store
+/info.txt
