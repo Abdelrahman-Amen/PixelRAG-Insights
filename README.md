@@ -6,11 +6,17 @@ Traditional RAG breaks PDFs into text chunks. PixelRAG treats every page as an *
 
 Pages are rendered as images, embedded with a vision model (Qwen3-VL + LoRA), indexed with FAISS, and retrieved by visual similarity. A multimodal LLM then reads the top matching pages and answers your question directly from the visuals.
 
+
+<img width="1536" height="1024" alt="Image" src="https://github.com/user-attachments/assets/1fbb02bc-d18c-4e38-a692-ea30cb83e5cf" />
+
+
 ```
 PDF → render pages as images → embed with Qwen3-VL + LoRA → FAISS index
                                                                     ↓
 Question → embed query → vector search → top-K pages → LLM → Answer
 ```
+
+
 
 ## When to use PixelRAG
 
