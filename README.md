@@ -237,3 +237,8 @@ make docker-down  # docker compose down
 
 Below is a demonstration of how the application works:
 
+
+![Demo of the Application](https://github.com/Abdelrahman-Amen/PixelRAG-Insights/blob/main/Demo.gif)
+
+
+
