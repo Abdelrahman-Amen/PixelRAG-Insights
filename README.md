@@ -232,3 +232,8 @@ make docker-up    # docker compose up --build
 make docker-down  # docker compose down
 ```
 
+
+# Demo 📽
+
+Below is a demonstration of how the application works:
+
