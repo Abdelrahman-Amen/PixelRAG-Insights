@@ -242,3 +242,8 @@ Below is a demonstration of how the application works:
 
 
 
+## 📄 License
+
+MIT License
+
+
